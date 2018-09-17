@@ -11,9 +11,9 @@ def checkFile(basepath, path, message="Missing file"):
     """Checks whether a file exists and if not, displays an error message"""
     validate(os.path.isfile(os.path.join(basePath, path)), message + " : " + path)
 
-def checkDir(path, message="Missing directory"):
+def checkDir(basepath, path, message="Missing directory"):
     """Checks whether a directory exists and if not, displays an error message"""
-    validate(os.path.isdir(path), message + " : " + path)
+    validate(os.path.isdir(os.path.join(basePath, path)), message + " : " + path)
 
 def checkDirectoryStructure(basePath):
     """Checks the general directory structure"""
