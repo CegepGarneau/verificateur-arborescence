@@ -67,6 +67,8 @@ if __name__ == "__main__":
         sys.stderr.write("The argument must be a directory : " + basePath)
         exit(2)
 
+    os.system("cls")
+
     print("DirectoryStructure")
     checkDirectoryStructure(basePath)
     
