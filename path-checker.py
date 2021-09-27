@@ -1,6 +1,13 @@
+import re
 import os
 import sys
 
+def extractNameAndDa(path):
+    """
+    Extracts the name and DA from path generated from Omnivox's files
+    Ex : Noel-Parise_1944993_TP_1_-_Recherche_Int_Remis_le_2021-09-06_17h51m51s
+    """
+    return re.search("[A-Za-z\-]+\_\d{7}", path).group(0)
 
 def validate(test, message):
     """Displays a message if a test is false"""
@@ -17,23 +24,25 @@ def checkDir(basepath, path, message="Missing directory"):
 
 def checkDirectoryStructure(basePath):
     """Checks the general directory structure"""
-    checkDir(basePath, "importations")
+    checkDir(basePath, "Importations")
 
-    checkDir(basePath, "importations\\photos")
-    checkDir(basePath, "importations\\textes")
+    checkDir(basePath, "Importations\\Photos")
+    checkDir(basePath, "Importations\\Textes")
     
-    checkDir(basePath, "recherches")
+    checkDir(basePath, "Recherches")
 
-    checkDir(basePath, "recherches\\images")
-    checkDir(basePath, "recherches\\images\\gif")
-    checkDir(basePath, "recherches\\images\\jpg")
-    checkDir(basePath, "recherches\\images\\png")
+    checkDir(basePath, "Recherches\\Images")
+    checkDir(basePath, "Recherches\\Images\\gif")
+    checkDir(basePath, "Recherches\\Images\\jpg")
+    checkDir(basePath, "Recherches\\Images\\png")
     
-    checkDir(basePath, "recherches\\liens")
-    checkDir(basePath, "recherches\\réponses")
+    checkDir(basePath, "Recherches\\Projet")
+    
+    checkDir(basePath, "Traitement d'images")
+    checkDir(basePath, "Traitement d'images\\Originaux")
 
 def checkImportation(basePath):
-    """Checks files located in \\importations"""
+    """Checks files located in \\Importations"""
     checkFile(basePath, "Importations\\Photos\\1.jpg")
     checkFile(basePath, "Importations\\Photos\\2.png")
     checkFile(basePath, "Importations\\Photos\\4.gif")
@@ -41,20 +50,9 @@ def checkImportation(basePath):
     checkFile(basePath, "Importations\\textes\\3.txt")
     checkFile(basePath, "Importations\\textes\\5.docx")
 
-def checkImages(basePath):
-    """Checks images located in Recherches\\images"""
-    checkFile(basePath, "Recherches\\Images\\gif\\athlète.gif")
-    checkFile(basePath, "Recherches\\Images\\jpg\\épreuve-olympique.jpg")
-    checkFile(basePath, "Recherches\\Images\\png\\passion.png")
-
-def checkLinks(basePath):
-    """Checks if a Word file is located in Recherches\\liens"""
-    checkFile(basePath, "Recherches\\liens\\liens.docx")
-
-def checkAnswers(basePath):
-    """Checks for Word files located in Recherches\\réponses"""
-    checkFile(basePath, "Recherches\\réponses\\recherche.docx")    
-    checkFile(basePath, "Recherches\\réponses\\réponses.docx")    
+def checkProjet(basePath):
+    """Checks Images located in Recherches\\Projet"""
+    checkFile(basePath, "Recherches\\Projet\\Projet.docx")
 
 
 if __name__ == "__main__":
@@ -69,17 +67,11 @@ if __name__ == "__main__":
 
     os.system("cls")
 
-    print("DirectoryStructure")
+    print(extractNameAndDa(basePath))
+
     checkDirectoryStructure(basePath)
-    
-    print("Importations")
     checkImportation(basePath)
+    checkProjet(basePath)
 
-    print("Images")
-    checkImages(basePath)
-
-    print("Liens")
-    checkLinks(basePath)
-
-    print("Réponses")
-    checkAnswers(basePath)
+    print()
+    print("Done")
