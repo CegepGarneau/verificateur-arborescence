@@ -1,0 +1,26 @@
+<dir name=".">
+    <dir name="Importations">
+        <dir name="Photos">
+            <file name="1.jpg"/>
+            <file name="2.png"/>
+            <file name="4.gif"/>
+        </dir>
+        <dir name="Textes">
+            <file name="3.txt"/>
+            <file name="5.docx"/>
+        </dir>
+    </dir>
+    <dir name="Recherches">
+        <dir name="Images">
+            <dir name="gif"/>
+            <dir name="jpg"/>
+            <dir name="png"/>
+        </dir>
+        <dir name="Projet">
+            <file name="Projet.docx"/>
+        </dir>
+    </dir>
+    <dir name="Traitement d'images">
+        <dir name="Originaux"/>
+    </dir>
+</dir>

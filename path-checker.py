@@ -1,6 +1,8 @@
 import re
 import os
 import sys
+import xml.dom.minidom
+
 
 def extractNameAndDa(path):
     """
@@ -9,69 +11,62 @@ def extractNameAndDa(path):
     """
     return re.search("[A-Za-z\-]+\_\d{7}", path).group(0)
 
+
 def validate(test, message):
     """Displays a message if a test is false"""
     if (not test):
         print("### " + message)
+    return test
 
-def checkFile(basepath, path, message="Missing file"):
+
+def checkFile(dirpath, filename, message="Missing file"):
     """Checks whether a file exists and if not, displays an error message"""
-    validate(os.path.isfile(os.path.join(basePath, path)), message + " : " + path)
+    filepath = os.path.join(dirpath, filename)
+    return validate(os.path.isfile(filepath), message + " : " + filepath)
 
-def checkDir(basepath, path, message="Missing directory"):
+
+def checkDir(path, message="Missing directory"):
     """Checks whether a directory exists and if not, displays an error message"""
-    validate(os.path.isdir(os.path.join(basePath, path)), message + " : " + path)
+    return validate(os.path.isdir(path), message + " : " + path)
 
-def checkDirectoryStructure(basePath):
+
+def checkDirectoryStructure(parentPath, currentNode):
     """Checks the general directory structure"""
-    checkDir(basePath, "Importations")
+    type = currentNode.nodeName
 
-    checkDir(basePath, "Importations\\Photos")
-    checkDir(basePath, "Importations\\Textes")
-    
-    checkDir(basePath, "Recherches")
-
-    checkDir(basePath, "Recherches\\Images")
-    checkDir(basePath, "Recherches\\Images\\gif")
-    checkDir(basePath, "Recherches\\Images\\jpg")
-    checkDir(basePath, "Recherches\\Images\\png")
-    
-    checkDir(basePath, "Recherches\\Projet")
-    
-    checkDir(basePath, "Traitement d'images")
-    checkDir(basePath, "Traitement d'images\\Originaux")
-
-def checkImportation(basePath):
-    """Checks files located in \\Importations"""
-    checkFile(basePath, "Importations\\Photos\\1.jpg")
-    checkFile(basePath, "Importations\\Photos\\2.png")
-    checkFile(basePath, "Importations\\Photos\\4.gif")
-    
-    checkFile(basePath, "Importations\\textes\\3.txt")
-    checkFile(basePath, "Importations\\textes\\5.docx")
-
-def checkProjet(basePath):
-    """Checks Images located in Recherches\\Projet"""
-    checkFile(basePath, "Recherches\\Projet\\Projet.docx")
+    if(type == "file"):
+        checkFile(parentPath, currentNode.getAttribute("name"))
+    elif(type == "dir"):
+        currentPath = os.path.join(
+            parentPath, currentNode.getAttribute("name"))
+        if(checkDir(currentPath)):
+            for child in currentNode.childNodes:
+                checkDirectoryStructure(currentPath, child)
 
 
 if __name__ == "__main__":
-    if (len(sys.argv) != 2):
-        sys.stderr.write("Base directory needed")
+    if (len(sys.argv) != 3):
+        sys.stderr.write("Config file and base directory missing")
         exit(1)
 
-    basePath = sys.argv[1]
-    if (not os.path.isdir(basePath)):
-        sys.stderr.write("The argument must be a directory : " + basePath)
+    configPath = sys.argv[1]
+    if (not os.path.isfile(configPath)):
+        sys.stderr.write("First argument must be a file : " + configPath)
         exit(2)
+
+    basePath = sys.argv[2]
+    if (not os.path.isdir(basePath)):
+        sys.stderr.write("Second argument must be a directory : " + basePath)
+        exit(3)
 
     os.system("cls")
 
     print(extractNameAndDa(basePath))
 
-    checkDirectoryStructure(basePath)
-    checkImportation(basePath)
-    checkProjet(basePath)
-
-    print()
-    print("Done")
+    try:
+        with open(configPath) as configFile:
+            config = xml.dom.minidom.parse(configFile)
+        checkDirectoryStructure(basePath, config.documentElement)
+    except Exception as ex:
+        sys.stderr.write("Error checking " + basePath, ex)
+        exit(4)
