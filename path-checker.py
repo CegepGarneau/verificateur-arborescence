@@ -1,7 +1,7 @@
 import re
 import os
 import sys
-import xml.dom.minidom
+import xml.dom.minidom as minidom
 
 
 def extractNameAndDa(path):
@@ -13,7 +13,7 @@ def extractNameAndDa(path):
 
 
 def validate(test, message):
-    """Displays a message if a test is false"""
+    """Displays a message if test is false"""
     if (not test):
         print("### " + message)
     return test
@@ -41,7 +41,8 @@ def checkDirectoryStructure(parentPath, currentNode):
             parentPath, currentNode.getAttribute("name"))
         if(checkDir(currentPath)):
             for child in currentNode.childNodes:
-                checkDirectoryStructure(currentPath, child)
+                if (child.nodeType == minidom.Node.ELEMENT_NODE):
+                    checkDirectoryStructure(currentPath, child)
 
 
 if __name__ == "__main__":
@@ -65,7 +66,7 @@ if __name__ == "__main__":
 
     try:
         with open(configPath) as configFile:
-            config = xml.dom.minidom.parse(configFile)
+            config = minidom.parse(configFile)
         checkDirectoryStructure(basePath, config.documentElement)
     except Exception as ex:
         sys.stderr.write("Error checking " + basePath, ex)
