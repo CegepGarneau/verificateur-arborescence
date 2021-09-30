@@ -7,9 +7,11 @@ import xml.dom.minidom as minidom
 def extractNameAndDa(path):
     """
     Extracts the name and DA from path generated from Omnivox's files
-    Ex : Noel-Parise_1944993_TP_1_-_Recherche_Int_Remis_le_2021-09-06_17h51m51s
+    Ex : 
+    Noel-Parise_1944993_TP_1_-_Recherche_Int_Remis_le_2021-09-06_17h51m51s
+    Yergeau-Rhéaume_2042114_TP_1_Remis_le_2021-09-09_13h37m17s
     """
-    return re.search("[A-Za-z\-]+\_\d{7}", path).group(0)
+    return re.search("(-|[^\W\d])+\_\d{7}", path).group(0)
 
 
 def validate(test, message):
@@ -60,7 +62,6 @@ if __name__ == "__main__":
         sys.stderr.write("Second argument must be a directory : " + basePath)
         exit(3)
 
-    os.system("cls")
 
     print(extractNameAndDa(basePath))
 
