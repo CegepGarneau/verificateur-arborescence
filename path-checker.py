@@ -22,7 +22,7 @@ def validate(test, message):
 
 
 def checkFile(dirpath, filename, message="Missing file"):
-    """Checks whether a file exists and if not, displays an error message"""
+    """Checks if a file exists and if not, displays an error message"""
     filepath = os.path.join(dirpath, filename)
     return validate(os.path.isfile(filepath), message + " : " + filepath)
 
