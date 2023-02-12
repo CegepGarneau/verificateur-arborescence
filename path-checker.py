@@ -8,7 +8,7 @@ import re
 import os
 import sys
 import traceback
-import xml.dom.minidom as minidom
+import xml.etree.ElementTree as etree
 
 
 def extract_name_and_da(path):
@@ -41,17 +41,18 @@ def check_dir(path, message="Missing directory"):
 
 def check_directory_structure(parent_path, current_node):
     """Checks the general directory structure"""
-    arg_type = current_node.nodeName
+    arg_type = current_node.tag
 
     if arg_type == "file":
-        check_file(parent_path, current_node.getAttribute("name"))
+        check_file(parent_path, current_node.attrib["name"])
     elif arg_type == "dir":
         current_path = os.path.join(
-            parent_path, current_node.getAttribute("name"))
+            parent_path,
+            current_node.attrib["name"]
+        )
         if check_dir(current_path):
-            for child in current_node.childNodes:
-                if child.nodeType == minidom.Node.ELEMENT_NODE:
-                    check_directory_structure(current_path, child)
+            for child in current_node.findall("./"):
+                check_directory_structure(current_path, child)
 
 
 if __name__ == "__main__":
@@ -72,10 +73,10 @@ if __name__ == "__main__":
     print(extract_name_and_da(base_path))
 
     try:
-        with open(config_path) as configFile:
-            config = minidom.parse(configFile)
-        check_directory_structure(base_path, config.documentElement)
-    except Exception as ex:
+        with open(config_path, encoding='utf-8') as configFile:
+            config = etree.parse(configFile)
+        check_directory_structure(base_path, config.getroot())
+    except etree.ParseError as ex:
         print("Error checking " + base_path, file=sys.stderr)
         traceback.print_exc()
         exit(4)
